@@ -1,0 +1,28 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2010-2011 OpenWrt.org
+
+START=80
+
+start_instance () {
+	local section="$1"
+
+	config_get user "$section" 'user'
+	config_get maxconn "$section" 'maxconn'
+	config_get listen "$section" 'listen'
+	config_get port "$section" 'port'
+	config_get memory "$section" 'memory'
+	config_get options "$section" 'options'
+
+	service_start /usr/bin/memcached -d -u $user \
+		-c $maxconn -l $listen \
+		-p $port -m $memory $options
+}
+
+start() {
+	config_load 'memcached'
+	config_foreach start_instance 'memcached'
+}
+
+stop() {
+	service_stop /usr/bin/memcached
+}
