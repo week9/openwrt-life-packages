@@ -8,14 +8,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libwebsockets
-PKG_VERSION:=2.4.1
-PKG_RELEASE:=2
+PKG_VERSION:=3.2.1
+PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_URL:=https://codeload.github.com/warmcat/libwebsockets/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=29414be4f79f6abc0e6aadccd09a4da0f0c431e3b5691f496acd081ae6a8240c
-
+PKG_HASH:=5b1521002771420bc91e1c91f36bc51f54bf4035c4bebde296dec235a45c33df
 
 PKG_SOURCE_VERSION:=v$(PKG_VERSION)
 
@@ -87,6 +86,7 @@ ifeq ($(BUILD_VARIANT),full)
     CMAKE_OPTIONS += -DLWS_WITH_SERVER_STATUS=ON
     CMAKE_OPTIONS += -DLWS_WITH_ACCESS_LOG=ON
     CMAKE_OPTIONS += -DLWS_WITH_CGI=ON
+    CMAKE_OPTIONS += -DLWS_UNIX_SOCK=ON
 endif
 
 define Package/libwebsockets/install
