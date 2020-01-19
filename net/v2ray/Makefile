@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2019 Xingwang Liao
+# Copyright (C) 2019-2020 Xingwang Liao
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=v2ray-core
 PKG_VERSION:=4.22.1
-PKG_RELEASE:=1
+PKG_RELEASE:=4
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/v2ray/v2ray-core/tar.gz/v$(PKG_VERSION)?
@@ -56,6 +56,10 @@ PKG_USE_MIPS16:=0
 
 GO_PKG:=v2ray.com/core
 GO_PKG_LDFLAGS:=-s -w
+GO_PKG_LDFLAGS_X:= \
+	v2ray.com/core.version=$(PKG_VERSION) \
+	v2ray.com/core.build=R$(PKG_RELEASE) \
+	v2ray.com/core.codename=OpenWrt
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
@@ -235,7 +239,7 @@ define Download/geosite.dat
 endef
 
 define Build/Prepare
-	$(Build/Prepare/Default)
+	$(call Build/Prepare/Default)
 
 #ifneq ($(CONFIG_V2RAY_EXCLUDE_ASSETS),y)
 	# move file to make sure download new file every build
@@ -243,12 +247,6 @@ define Build/Prepare
 	#mv -f $(DL_DIR)/$(GEOSITE_FILE) $(PKG_BUILD_DIR)/release/config/geosite.dat
 #endif
 
-	( \
-		sed -i \
-			's/\(version[[:space:]]*=[[:space:]]*"\).*\("\)/\1$(PKG_VERSION)\2/; \
-			s/\(build[[:space:]]*=[[:space:]]*"\).*\("\)/\1OpenWrt R$(PKG_RELEASE)\2/' \
-			$(PKG_BUILD_DIR)/core.go ; \
-	)
 ifneq ($(V2RAY_SED_ARGS),)
 	( \
 		sed -i \
@@ -264,7 +262,7 @@ define Build/Compile
 	mv -f $(GO_PKG_BUILD_BIN_DIR)/main $(GO_PKG_BUILD_BIN_DIR)/v2ray
 
 ifeq ($(CONFIG_V2RAY_COMPRESS_UPX),y)
-	upx --ultra-brute $(GO_PKG_BUILD_BIN_DIR)/v2ray
+	upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/v2ray
 endif
 
 ifneq ($(CONFIG_V2RAY_EXCLUDE_V2CTL),y)
@@ -273,7 +271,7 @@ ifneq ($(CONFIG_V2RAY_EXCLUDE_V2CTL),y)
 	mv -f $(GO_PKG_BUILD_BIN_DIR)/main $(GO_PKG_BUILD_BIN_DIR)/v2ctl
 
 ifeq ($(CONFIG_V2RAY_COMPRESS_UPX),y)
-	upx --ultra-brute $(GO_PKG_BUILD_BIN_DIR)/v2ctl
+	upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/v2ctl
 endif
 endif
 endef
