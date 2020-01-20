@@ -15,7 +15,6 @@ define Package/vpnbypass
 	SECTION:=net
 	CATEGORY:=Network
 	DEPENDS:=+ipset +iptables
-	CONFLICTS:=vpn-policy-routing
 	TITLE:=VPN Bypass Service
 	PKGARCH:=all
 endef
