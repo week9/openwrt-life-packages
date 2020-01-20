@@ -12,7 +12,7 @@ PKG_VERSION:=5.6.4
 PKG_RELEASE:=1
 
 PKG_SOURCE:=cryptopp$(subst .,,$(PKG_VERSION)).zip
-PKG_SOURCE_URL:=http://www.cryptopp.com/
+PKG_SOURCE_URL:=https://www.cryptopp.com/
 PKG_MD5SUM:=4ee7e5cdd4a45a14756c169eaf2a77fc
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)/$(PKG_NAME)-$(PKG_VERSION)
