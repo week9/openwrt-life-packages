@@ -1,0 +1,9 @@
+#
+#       -l|--local-port
+#        Sets the UDP listening port. 
+#        设置服务器监听的UDP端口
+-l=7777
+#
+# Specify in supernodes.list the list of allowed communities
+# 设置允许接入服务器的N2N网络组列表，如不设置则默认允许任意网络组接入。
+#-c=/etc/supernodes.list

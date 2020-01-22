@@ -1,0 +1,37 @@
+#!/bin/sh /etc/rc.common
+
+START=50
+
+USE_PROCD=1
+PROG=/usr/bin/php-fpm
+CONFIG=/etc/php7-fpm.conf
+SERVICE_PID_FILE=/var/run/php7-fpm.pid
+
+section_enabled() {
+	config_get_bool enabled "$1" enabled 0
+	[ $enabled -gt 0 ]
+}
+
+php7() {
+	section_enabled "$section" || return 1
+	procd_open_instance
+	procd_set_param command $PROG -y $CONFIG -g $SERVICE_PID_FILE
+	procd_set_param file $CONFIG
+	procd_set_param respawn
+	procd_close_instance
+}
+
+start_service() {
+	config_load 'php7-fpm'
+	config_foreach php7 'base'
+}
+
+stop_service()
+{
+	service_stop $PROG
+}
+
+service_triggers()
+{
+	procd_add_reload_trigger "php7-fpm"
+}

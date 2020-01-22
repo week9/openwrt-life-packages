@@ -1,0 +1,98 @@
+--- a/configure.ac	2019-09-07 20:48:41.000000000 +0800
++++ b/configure.ac	2019-05-11 14:38:27.000000000 +0800
+@@ -24,7 +24,7 @@
+ # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301, USA
+ #
+ 
+-AC_INIT([aMule-dlp], [SVN], [admin@amule.org])
++AC_INIT([aMule-dlp], [2.3.3], [admin@amule.org])
+ AM_INIT_AUTOMAKE
+ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES])
+ 
+--- a/debian/control	2019-09-07 20:48:41.000000000 +0800
++++ b/debian/control	2019-12-17 02:15:07.000000000 +0800
+@@ -2,7 +2,7 @@
+ Section: net
+ Priority: optional
+ Maintainer: Werner Mahr (Vollstrecker) <amule@vollstreckernet.de>
+-Build-Depends: debhelper (>= 10), libglib2.0-dev, zlib1g-dev, libwxgtk3.0-dev, libgd2-xpm-dev | libgdchart-gd2-xpm-dev, bison, flex, libcrypto++-dev, libreadline-dev, libgeoip-dev, libupnp-dev (>> 1.6.6), binutils-dev, autoconf, libqt4-dev, kdelibs5-dev, gettext
++Build-Depends: debhelper (>= 10), libglib2.0-dev, zlib1g-dev, libwxgtk3.0-dev, libgd2-xpm-dev | libgdchart-gd2-xpm-dev, bison, flex, libcrypto++-dev, libreadline-dev, libgeoip-dev, libupnp-dev (>> 1.6.6), binutils-dev, autoconf, libqt4-dev, kdelibs5-dev, gettext, libasio-dev
+ Standards-Version: 3.9.1
+ Homepage: http://www.amule.org
+ 
+--- a/debian/rules	2019-09-07 20:48:41.000000000 +0800
++++ b/debian/rules	2019-12-17 02:15:07.000000000 +0800
+@@ -320,6 +320,7 @@
+ 		LDFLAGS="-Wl,--as-needed ${LDFLAGS}"\
+ 		--enable-ccache\
+ 		--enable-geoip\
++		--with-boost\
+ 		${PLASMAMULE}\
+ 		${AMULECMD}\
+ 		${DEBUGGING}\
+--- a/src/amuleDlg.cpp	2019-09-07 20:48:41.000000000 +0800
++++ b/src/amuleDlg.cpp	2019-11-20 21:26:01.000000000 +0800
+@@ -504,7 +504,7 @@
+ 	  _("Forum: http://forum.amule.org \n") <<
+ 	  _("FAQ: http://wiki.amule.org \n\n") <<
+ 	  _("Contact: admin@amule.org (administrative issues) \n") <<
+-	  _("Copyright (c) 2003-2011 aMule Team \n\n") <<
++	  _("Copyright (c) 2003-2019 aMule Team \n\n") <<
+ 	  _("Part of aMule is based on \n") <<
+ 	  _("Kademlia: Peer-to-peer routing based on the XOR metric.\n") <<
+ 	  _(" Copyright (c) 2002-2011 Petar Maymounkov ( petar@post.harvard.edu )\n") <<
+--- a/src/include/common/ClientVersion.h	2019-09-07 20:48:41.000000000 +0800
++++ b/src/include/common/ClientVersion.h	2019-05-11 14:38:02.000000000 +0800
+@@ -44,10 +44,10 @@
+ // RELEASERS: REMOVE THE DEFINE ON THE RELEASES, PLEASE
+ // AND FIX THE MOD_VERSION_LONG
+ 
+-#define __SVN__
++#define AMULE_DLP
+ 
+ #ifndef VERSION
+-	#define VERSION "2.4.0"
++	#define VERSION "2.3.3"
+ #endif
+ 
+ #if defined __SVN__
+@@ -59,8 +59,8 @@
+ #endif
+ 
+ #define	VERSION_MJR		2
+-#define	VERSION_MIN		4
+-#define	VERSION_UPDATE		0
++#define	VERSION_MIN		3
++#define	VERSION_UPDATE		3
+ 
+ #ifndef PACKAGE
+ #define PACKAGE "amule"
+--- a/src/libs/common/Path.cpp	2019-09-07 20:48:41.000000000 +0800
++++ b/src/libs/common/Path.cpp	2019-05-11 06:03:49.000000000 +0800
+@@ -230,7 +230,7 @@
+ 	}
+ 
+ 	wxCharBuffer fn = filename2char(filename);
+-	if (fn.data() && fn.length()) {
++	if (fn.data()) {
+ 		// Filename is valid in the current locale. This means that
+ 		// it either originated from a (wx)system-call, or from a
+ 		// user with a properly setup system.
+--- a/src/OScopeCtrl.cpp	2019-09-07 20:48:41.000000000 +0800
++++ b/src/OScopeCtrl.cpp	2019-11-18 07:58:30.000000000 +0800
+@@ -521,15 +521,12 @@
+ {
+ 	bRecreateGraph |= bInvalidateGraph;
+ 	bRecreateGrid |= bInvalidateGrid;
+-	// It appears the timerRedraw logic screws up Mac, disable it there
+-#ifndef __WXMAC__
+ 	// To prevent startup problems don't start timer logic until
+ 	// a native OnPaint event has been generated.
+ 	if (m_onPaint) {
+ 		bRecreateAll  |= bInvalidateGraph && bInvalidateGrid;
+ 		timerRedraw.Start(100, true);	// One-shot timer
+ 	}
+-#endif
+ }
+ 
+ 
