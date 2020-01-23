@@ -446,10 +446,10 @@ endif
 
 ifeq ($(CONFIG_NGINX_HTTP_BROTLI),y)
   define Download/nginx-brotli
-    VERSION:=bafbafc61b53544ed506ea1d6fd8978a263cfed2
+    VERSION:=e505dce68acc190cc5a1e780a3b0275e39f160ca
     SUBDIR:=nginx-brotli
     FILE:=ngx-brotli-module-$$(VERSION).tar.xz
-    URL:=https://github.com/eustas/ngx_brotli.git
+    URL:=https://github.com/google/ngx_brotli.git
     PROTO:=git
   endef
   $(eval $(call Download,nginx-brotli))
