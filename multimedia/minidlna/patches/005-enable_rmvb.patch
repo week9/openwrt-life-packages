@@ -1,5 +1,5 @@
---- a/metadata.c	2018-05-05 07:11:25.000000000 +0800
-+++ b/metadata.c	2019-05-06 22:01:18.000000000 +0800
+--- a/metadata.c	2019-12-10 13:34:44.000000000 +0800
++++ b/metadata.c	2020-02-01 12:39:00.793059000 +0800
 @@ -862,6 +862,10 @@
  			xasprintf(&m.mime, "video/x-matroska");
  		else if( strcmp(ctx->iformat->name, "flv") == 0 )
@@ -11,8 +11,8 @@
  		if( m.mime )
  			goto video_no_dlna;
  
---- a/upnpglobalvars.h	2018-05-05 07:11:25.000000000 +0800
-+++ b/upnpglobalvars.h	2019-05-06 22:03:37.000000000 +0800
+--- a/upnpglobalvars.h	2019-12-10 13:34:44.000000000 +0800
++++ b/upnpglobalvars.h	2020-02-01 12:37:34.738211000 +0800
 @@ -172,7 +172,8 @@
  	"http-get:*:audio/x-wav:*," \
  	"http-get:*:audio/x-flac:*," \
@@ -23,9 +23,18 @@
  
  #define DLNA_FLAG_DLNA_V1_5      0x00100000
  #define DLNA_FLAG_HTTP_STALLING  0x00200000
---- a/utils.c	2018-05-05 07:11:25.000000000 +0800
-+++ b/utils.c	2019-05-06 22:04:14.000000000 +0800
-@@ -401,6 +401,7 @@
+--- a/utils.c	2019-12-10 13:34:44.000000000 +0800
++++ b/utils.c	2020-02-01 12:35:31.195793000 +0800
+@@ -377,6 +377,8 @@
+ 				return "3gp";
+ 			else if( strncmp(mime+6, "x-tivo-mpeg", 11) == 0 )
+ 				return "TiVo";
++			else if( strcmp(mime+6, "x-pn-realvideo") == 0 )
++				return "rm";
+ 			break;
+ 		case 'i':
+ 			if( strcmp(mime+6, "jpeg") == 0 )
+@@ -401,6 +403,7 @@
  		ends_with(file, ".m2t") || ends_with(file, ".mkv")   ||
  		ends_with(file, ".vob") || ends_with(file, ".ts")    ||
  		ends_with(file, ".flv") || ends_with(file, ".xvid")  ||
