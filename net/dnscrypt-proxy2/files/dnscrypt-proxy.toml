@@ -32,6 +32,7 @@
 
 ## List of local addresses and ports to listen to. Can be IPv4 and/or IPv6.
 ## Example with both IPv4 and IPv6:
+## listen_addresses = ['127.0.0.1:53', '[::1]:53']
 ## 要监听的本地地址和端口列表，可以是IPv4或IPv6。
 listen_addresses = ['127.0.0.1:5354', '[::1]:5354']
 
@@ -57,7 +58,7 @@ ipv4_servers = true
 
 # Use servers reachable over IPv6 -- Do not enable if you don't have IPv6 connectivity
 # 使用可通过IPv6访问的服务器 - 如果没有IPv6连接则不启用
-ipv6_servers = true
+ipv6_servers = false
 
 # Use servers implementing the DNSCrypt protocol
 # 使用实现DNSCrypt协议的服务器
@@ -199,21 +200,23 @@ cert_refresh_delay = 240
 #tls_cipher_suite = [52392, 49199]
 
 
-## Fallback resolver
-## This is a normal, non-encrypted DNS resolver, that will be only used
+## Fallback resolvers
+## These are normal, non-encrypted DNS resolvers, that will be only used
 ## for one-shot queries when retrieving the initial resolvers list, and
 ## only if the system DNS configuration doesn't work.
-## No user application queries will ever be leaked through this resolver,
-## and it will not be used after IP addresses of resolvers URLs have been found.
-## It will never be used if lists have already been cached, and if stamps
+## No user application queries will ever be leaked through these resolvers,
+## and they will not be used after IP addresses of resolvers URLs have been found.
+## They will never be used if lists have already been cached, and if stamps
 ## don't include host names without IP addresses.
-## It will not be used if the configured system DNS works.
-## A resolver supporting DNSSEC is recommended.
+## They will not be used if the configured system DNS works.
+## Resolver supporting DNSSEC are recommended.
 ##
 ## People in China may need to use 114.114.114.114:53 here.
 ## Other popular options include 8.8.8.8 and 1.1.1.1.
+##
+## If more than one resolver are specified, they will be tried in sequence.
 ## 后备DNS服务器
-fallback_resolver = '114.114.114.114:53'
+fallback_resolvers = ['119.29.29.29:53', '114.114.114.114:53']
 
 
 ## Always use the fallback resolver before the system DNS settings
@@ -354,7 +357,7 @@ cache = false
 
 ## Cache size
 ## 缓存大小（KB）
-cache_size = 1024
+cache_size = 4096
 
 
 ## Minimum TTL for cached entries
@@ -423,7 +426,7 @@ cache_neg_max_ttl = 600
 [query_log]
 
   ## Path to the query log file (absolute, or relative to the same directory as the config file)
-  ## Can be /dev/stdout to log to the standard output (and set log_files_max_size to 0)
+  ## Non non-Windows systems, can be /dev/stdout to log to the standard output (and set log_files_max_size to 0)
   ## DNS查询记录日志文件
   # file = 'query.log'
 
