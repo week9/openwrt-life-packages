@@ -26,8 +26,8 @@ ifeq ($(ARCH),aarch64)
 endif
 
 PKG_NAME:=syncthing
-PKG_VERSION:=v1.3.3
-PKG_RELEASE:=2
+PKG_VERSION:=v1.3.4
+PKG_RELEASE:=1
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_NAME)-linux-$(PKG_ARCH_SYNCTHING)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/syncthing/syncthing/releases/download/$(PKG_VERSION)
@@ -62,4 +62,4 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(PKG_NAME)-linux-$(PKG_ARCH_SYNCTHING)-$(PKG_VERSION)/syncthing $(1)/usr/bin/syncthing
 endef
 
-$(eval $(call BuildPackage,$(PKG_NAME)))
+$(eval $(call BuildPackage,syncthing))
