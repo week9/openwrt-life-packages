@@ -17,6 +17,8 @@ PKG_SOURCE_URL:=https://github.com/lathiat/avahi/releases/download/v$(PKG_VERSIO
 PKG_HASH:=57a99b5dfe7fdae794e3d1ee7a62973a368e91e414bd0dfa5d84434de5b14804
 
 PKG_MAINTAINER:=Ted Hess <thess@kitschensync.net>
+PKG_LICENSE:=LGPL-2.1-or-later
+PKG_LICENSE_FILES:=LICENSE
 PKG_CPE_ID:=cpe:/a:avahi:avahi
 
 PKG_BUILD_DEPENDS:=intltool/host
@@ -25,12 +27,6 @@ PKG_REMOVE_FILES:=autogen.sh
 
 PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=1
-
-ifeq ($(BUILD_VARIANT),dbus)
-PKG_BUILD_DIR=$(BUILD_DIR)/$(PKG_NAME)/dbus/$(PKG_NAME)-$(PKG_VERSION)
-else
-PKG_BUILD_DIR=$(BUILD_DIR)/$(PKG_NAME)/nodbus/$(PKG_NAME)-$(PKG_VERSION)
-endif
 
 include $(INCLUDE_DIR)/package.mk
 
