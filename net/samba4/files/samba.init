@@ -178,7 +178,13 @@ service_triggers() {
 	done
 }
 
-start_service() {
+section_enable() {
+	config_get_bool enable "$1" enable 0
+	[ $enable -gt 0 ]
+}
+
+samba() {
+	section_enable "$section" || return 1
 	init_config
 	
 	if [ ! -e /etc/samba/smb.conf ]; then
@@ -227,4 +233,9 @@ start_service() {
 			procd_close_instance
 		fi
 	fi
+}
+
+start_service() {
+	config_load 'samba4'
+	config_foreach samba 'samba'
 }
