@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=apache
 PKG_VERSION:=2.4.41
-PKG_RELEASE:=6
+PKG_RELEASE:=1
 PKG_SOURCE_NAME:=httpd
 
 PKG_SOURCE:=$(PKG_SOURCE_NAME)-$(PKG_VERSION).tar.bz2
@@ -94,6 +94,24 @@ define Package/apache/conffiles
 /etc/apache2/magic
 /etc/apache2/mime.types
 /etc/init.d/apache2
+endef
+
+define Package/apache/postinst
+#!/bin/sh
+if [ -z "$${IPKG_INSTROOT}" ]; then
+  echo
+  echo "o-------------------------------------------------------------------o"
+  echo "| Apache package changes                                            |"
+  echo "o-------------------------------------------------------------------o"
+  echo "| - The server binary was renamed from httpd to apache2             |"
+  echo "| - A simple init script is installed (/etc/init.d/apache2)         |"
+  echo "| - The server runs as user apache by default now                   |"
+  echo "| - Configuration resides in /etc/apache2 instead of /etc/apache    |"
+  echo "| - Modules are installed to /usr/lib/apache2                       |"
+  echo "o-------------------------------------------------------------=^_^=-o"
+  echo
+fi
+exit 0
 endef
 
 define Package/apache-ab
