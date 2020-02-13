@@ -1,4 +1,4 @@
 {
-    "data-root": "/opt/docker/",
+    "data-root": "/mnt/sdb/docker/",
     "log-level": "warn"
 }
