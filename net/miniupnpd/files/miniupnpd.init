@@ -57,20 +57,18 @@ upnpd_write_bool() {
 
 upnpd() {
 	config_load "upnpd"
-	local external_iface external_zone internal_iface upload download log_output enabled
-	local external_ip port config_file serial_number model_number
+	local external_iface external_iface6 external_zone internal_iface upload download log_output
+	local port config_file serial_number model_number
 	local uuid notify_interval presentation_url
 	local upnp_lease_file clean_ruleset_threshold clean_ruleset_interval
-	local ipv6_listening_ip enabled
 
+	local enabled
 	config_get_bool enabled config enabled 1
-
 	[ "$enabled" -eq 0 ] && return 1
 
 	config_get external_iface config external_iface
 	config_get external_zone config external_zone
 	config_get internal_iface config internal_iface
-	config_get external_ip config external_ip
 	config_get port config port 5000
 	config_get upload config upload
 	config_get download config download
@@ -84,9 +82,8 @@ upnpd() {
 	config_get upnp_lease_file config upnp_lease_file
 	config_get clean_ruleset_threshold config clean_ruleset_threshold
 	config_get clean_ruleset_interval config clean_ruleset_interval
-	config_get ipv6_listening_ip config ipv6_listening_ip
 
-	local conf ifname
+	local conf ifname ifname6
 
 	. /lib/functions/network.sh
 
@@ -95,11 +92,12 @@ upnpd() {
 		# manual external zone (if dynamically find interfaces
 		# belonging to it) overrides network_find_wan*
 		[ -n "$external_zone" ] && ifname=$(fw3 -q zone "$external_zone" | head -1)
-		[ -n "$external_iface" ] || network_find_wan external_iface
-		[ -n "$external_iface" ] || network_find_wan6 external_iface
+		[ -z "$external_iface" ] && network_find_wan external_iface
+		[ -z "$external_iface6" ] && network_find_wan6 external_iface6
 	}
 
-	[ -n "$ifname" ] || network_get_device ifname "$external_iface"
+	[ -z "$ifname" ] && network_get_device ifname "$external_iface"
+	[ -z "$ifname6" ] && network_get_device ifname6 "$external_iface6"
 
 	if [ -n "$config_file" ]; then
 		conf="$config_file"
@@ -110,20 +108,19 @@ upnpd() {
 
 		{
 		echo "ext_ifname=$ifname"
-
-		[ -n "$external_ip" ] && echo "ext_ip=$external_ip"
+		echo "ext_ifname6=$ifname6"
 
 		local iface
 		for iface in ${internal_iface:-lan}; do
 			local device
 			network_get_device device "$iface" && echo "listening_ip=$device"
+			network_get_device device "$iface" && echo "ipv6_listening_ip=$device"
 		done
 
 		config_load "upnpd"
 		upnpd_write_bool enable_natpmp 1
 		upnpd_write_bool enable_upnp 1
 		upnpd_write_bool secure_mode 1
-		upnpd_write_bool pcp_allow_thirdparty 0
 		upnpd_write_bool system_uptime 1
 		upnpd_write_bool igdv1 0 force_igd_desc_v1
 
@@ -138,7 +135,6 @@ upnpd() {
 		[ -n "$notify_interval" ] && echo "notify_interval=$notify_interval"
 		[ -n "$clean_ruleset_threshold" ] && echo "clean_ruleset_threshold=$clean_ruleset_threshold"
 		[ -n "$clean_ruleset_interval" ] && echo "clean_ruleset_interval=$clean_ruleset_interval"
-		[ -n "$ipv6_listening_ip" ] && echo "ipv6_listening_ip=$ipv6_listening_ip"
 		[ -n "$serial_number" ] && echo "serial=$serial_number"
 		[ -n "$model_number" ] && echo "model_number=$model_number"
 		[ -n "$port" ] && echo "port=$port"
