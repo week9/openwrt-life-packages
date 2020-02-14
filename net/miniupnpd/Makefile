@@ -62,7 +62,7 @@ define Package/miniupnpd/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/miniupnpd $(1)/usr/sbin/miniupnpd
 	$(INSTALL_BIN) ./files/miniupnpd.init $(1)/etc/init.d/miniupnpd
 	$(INSTALL_CONF) ./files/upnpd.config $(1)/etc/config/upnpd
-	$(INSTALL_DATA) ./files/miniupnpd.hotplug $(1)/etc/hotplug.d/iface/81-miniupnpd
+	$(INSTALL_DATA) ./files/miniupnpd.hotplug $(1)/etc/hotplug.d/iface/50-miniupnpd
 	$(INSTALL_BIN) ./files/miniupnpd.defaults $(1)/etc/uci-defaults/99-miniupnpd
 	$(INSTALL_DATA) ./files/firewall.include $(1)/usr/share/miniupnpd/firewall.include
 endef
