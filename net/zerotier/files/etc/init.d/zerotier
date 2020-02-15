@@ -8,19 +8,15 @@ PROG=/usr/bin/zerotier-one
 CONFIG_PATH=/var/lib/zerotier-one
 
 section_enabled() {
-	config_get_bool enabled "$1" 'enabled' 0
-	[ $enabled -ne 0 ]
+	config_get_bool enabled "$1" enabled 0
+	[ $enabled -gt 0 ]
 }
 
 start_instance() {
+	section_enabled "$section" || return 1
 	local cfg="$1"
 	local port secret config_path local_conf path
 	local args=""
-
-	if ! section_enabled "$cfg"; then
-		echo "disabled in config"
-		return 1
-	fi
 
 	config_get config_path $cfg 'config_path'
 	config_get port $cfg 'port'
@@ -96,6 +92,10 @@ start_service() {
 	config_load 'zerotier'
 	config_foreach start_instance 'zerotier'
 	touch /tmp/zero.log && nohup /etc/zerotier.start > /tmp/zero.log 2>&1 &
+}
+
+service_triggers() {
+	procd_add_reload_trigger "zerotier"
 }
 
 stop_instance() {
