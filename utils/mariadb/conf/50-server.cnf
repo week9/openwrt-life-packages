@@ -120,7 +120,7 @@ max_binlog_size = 100M
 # of your own which is read after this .cnf file, see my.cnf in parent folder
 # (files are read in alphabetical order).
 character-set-server = utf8mb4
-collation-server = utf8mb4_general_ci
+collation-server = utf8mb4_unicode_ci
 
 #
 # * Unix socket authentication plugin is built-in
