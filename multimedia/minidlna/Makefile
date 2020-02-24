@@ -22,7 +22,7 @@ PKG_LICENSE_FILES:=COPYING LICENCE.miniupnpd
 
 PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
-PKG_BUILD_PARALLEL:=0
+PKG_BUILD_PARALLEL:=1
 PKG_BUILD_DEPENDS:=util-linux
 
 include $(INCLUDE_DIR)/package.mk
@@ -64,6 +64,8 @@ define Package/minidlna/install
 	$(INSTALL_BIN) ./files/minidlna.init $(1)/etc/init.d/minidlna
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_CONF) ./files/minidlna.config $(1)/etc/config/minidlna
+	$(INSTALL_DIR) $(1)/etc/sysctl.d
+	$(INSTALL_CONF) ./files/minidlna.sysctl $(1)/etc/sysctl.d/30-minidlna.conf
 endef
 
 $(eval $(call BuildPackage,minidlna))
