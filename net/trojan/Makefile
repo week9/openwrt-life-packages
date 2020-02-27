@@ -8,7 +8,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=trojan
 PKG_VERSION:=1.14.1
-PKG_RELEASE:=3
+PKG_RELEASE:=5
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/trojan-gfw/trojan.git
@@ -48,7 +48,7 @@ CMAKE_OPTIONS += \
 	-DFORCE_TCP_FASTOPEN=OFF \
 	-DSYSTEMD_SERVICE=OFF \
 	-DOPENSSL_USE_STATIC_LIBS=FALSE \
-	-DBoost_DEBUG=OFF \
+	-DBoost_DEBUG=ON \
 	-DBoost_NO_BOOST_CMAKE=ON
 
 define Package/trojan
