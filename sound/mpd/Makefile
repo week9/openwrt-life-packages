@@ -98,7 +98,10 @@ define Package/mpd-avahi-service/conffiles
 /etc/avahi/services/mpd.service
 endef
 
-EXTRA_LDFLAGS += $(if $(ICONV_FULL),-liconv,-Wl,--whole-archive -liconv -Wl,--no-whole-archive) -Wl,-rpath-link=$(STAGING_DIR)/usr/lib/pulseaudio
+TARGET_LDFLAGS += \
+	$(if $(ICONV_FULL),-liconv,-Wl,--whole-archive -liconv -Wl,--no-whole-archive) \
+	$(if $(CONFIG_USE_GLIBC),-lpthread) \
+	-Wl,-rpath-link=$(STAGING_DIR)/usr/lib/pulseaudio
 
 CONFIGURE_ARGS += \
 	$(call autoconf_bool,CONFIG_IPV6,ipv6) \
