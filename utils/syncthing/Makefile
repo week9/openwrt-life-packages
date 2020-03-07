@@ -32,7 +32,7 @@ define Package/syncthing
   DEPENDS:=$(GO_ARCH_DEPENDS)
   SECTION:=utils
   CATEGORY:=Utilities
-  USERID:=syncthing:syncthing
+  USERID:=syncthing=8384:syncthing=8384
 endef
 
 GO_PKG_LDFLAGS_X:=\
