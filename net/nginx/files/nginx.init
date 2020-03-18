@@ -27,7 +27,6 @@ start_service() {
 	config_foreach ng 'base'
 }
 
-service_triggers()
-{
+service_triggers() {
 	procd_add_reload_trigger "nginx"
 }
