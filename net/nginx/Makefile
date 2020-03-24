@@ -448,7 +448,7 @@ endif
 
 ifeq ($(CONFIG_NGINX_HTTP_BROTLI),y)
   define Download/nginx-brotli
-    VERSION:=e505dce68acc190cc5a1e780a3b0275e39f160ca
+    VERSION:=0fdca2565dbedb88101ca19b1fb1511272f0821f
     SUBDIR:=nginx-brotli
     FILE:=ngx-brotli-module-$$(VERSION).tar.xz
     URL:=https://github.com/google/ngx_brotli.git
@@ -465,11 +465,10 @@ endif
 
 ifeq ($(CONFIG_NGINX_RTMP_MODULE),y)
   define Download/nginx-rtmp
-    VERSION:=f0ea62342a4eca504b311cd5df910d026c3ea4cf
+    VERSION:=3bf75232676da7eeff85dcd0fc831533a5eafe6b
     SUBDIR:=nginx-rtmp
     FILE:=ngx-rtmp-module-$$(VERSION).tar.xz
-    URL:=https://github.com/ut0mt8/nginx-rtmp-module.git
-    MIRROR_HASH:=d3f58066f0f858ed79f7f2b0c9b89de2ccc512c94ab3d0625f6dcff3df0b72c1
+    URL:=https://github.com/sergey-dryabzhinsky/nginx-rtmp-module.git
     PROTO:=git
   endef
   $(eval $(call Download,nginx-rtmp))
@@ -501,7 +500,7 @@ endif
 
 ifeq ($(CONFIG_NGINX_NAXSI),y)
   define Download/nginx-naxsi
-    VERSION:=f73b525f294de00a4f777e6b495c798d7c0d6ad4
+    VERSION:=15e58c3385e339509bf5ea42437d195fa6e0e488
     SUBDIR:=nginx-naxsi
     FILE:=nginx-naxsi-module-$$(VERSION).tar.xz
     URL:=https://github.com/nbs-system/naxsi.git
