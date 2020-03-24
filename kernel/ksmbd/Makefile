@@ -1,12 +1,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ksmbd
-PKG_VERSION:=3.1.5
+PKG_VERSION:=3.1.6
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/cifsd-team/cifsd/archive/$(PKG_VERSION)/
-PKG_HASH:=7c80a4ae632af69e9655a3c0c264f3b283356c0cafb5c72602943b6e949175e7
+PKG_HASH:=09c1eb39d9dcc9baf6bc9c5a2b91bcea377352bfc507ebdd10a370fffa7c31b4
 
 PKG_MAINTAINER:=Andy Walsh <andy.walsh44+github@gmail.com>
 PKG_LICENSE:=GPL-2.0-or-later
@@ -60,7 +60,7 @@ EXTRA_CFLAGS += -DCONFIG_SMB_INSECURE_SERVER=1
 endif
 
 define Build/Compile
-	$(KERNEL_MAKE) SUBDIRS="$(PKG_BUILD_DIR)" \
+	$(KERNEL_MAKE) M="$(PKG_BUILD_DIR)" \
 	EXTRA_CFLAGS="$(EXTRA_CFLAGS)" \
 	$(PKG_EXTRA_KCONFIG) \
 	CONFIG_SMB_SERVER=m \
