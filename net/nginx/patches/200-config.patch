@@ -15,7 +15,7 @@
 +CheckRule "$XSS >= 8" BLOCK;
 --- a/conf/nginx.conf	2019-08-13 20:51:43.000000000 +0800
 +++ b/conf/nginx.conf	2019-11-11 02:22:02.000000000 +0800
-@@ -1,117 +1,85 @@
+@@ -1,117 +1,87 @@
  
 -#user  nobody;
 -worker_processes  1;
@@ -162,7 +162,9 @@
 +      #                  '"$http_user_agent" "$http_x_forwarded_for"';
 +
 +      #通用基本参数
-+      access_log     off; #访问日志，用于记录详细的网站目录访问历史，如需启用，则直接填写日志文件路径
++      access_log     off;
++      #access_log     /var/run/access.log main buffer=64k flush=1m; #访问日志，用于记录详细的网站目录访问历史
++      #open_log_file_cache max=1000 inactive=10s valid=1m min_uses=1; #日志文件缓存
 +      charset        utf-8; #指定Nginx默认的字符集，解决中文显示乱码，文档内容也需要使用utf-8编码才能正常在浏览器内显示
 +      aio            threads=pool; #开启线程池模式，在访问大文件时不经过缓存，直接从硬盘读取文件
 +      directio       8m; #配合线程池模式的参数，当访问大于或等于此大小的文件时就采用线程池，小于则使用sendfile
