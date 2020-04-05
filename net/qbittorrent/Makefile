@@ -1,9 +1,3 @@
-#
-# Copyright (C) 2017-2019 Entware
-#
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
-#
 
 include $(TOPDIR)/rules.mk
 
@@ -43,10 +37,14 @@ there. qBittorrent is fast, stable and provides unicode support as
 well as many features.
 endef
 
+CONFIGURE_VARS += \
+  	QT_QMAKE="$(TOOLCHAIN_DIR)/bin" \
+	PKG_CONFIG_PATH="$(TOOLCHAIN_DIR)/lib/pkgconfig"
+
 CONFIGURE_ARGS += \
 	--disable-gui \
 	--enable-stacktrace=no \
-	--with-boost=$(STAGING_DIR)/usr
+	--with-boost="$(STAGING_DIR)/usr"
 
 MAKE_VARS += \
 	INSTALL_ROOT="$(PKG_INSTALL_DIR)"
