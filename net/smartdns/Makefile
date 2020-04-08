@@ -9,8 +9,11 @@ PKG_NAME:=smartdns
 PKG_VERSION:=2020.03.22
 PKG_RELEASE:=1
 
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
+PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://www.github.com/pymumu/smartdns.git
+PKG_SOURCE_URL:=https://github.com/pymumu/smartdns.git
 PKG_SOURCE_VERSION:=29e4d4b48bd9750a5cca558ce982afab3b4520c4
 PKG_MIRROR_HASH:=skip
 
