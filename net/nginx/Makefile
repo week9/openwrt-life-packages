@@ -448,7 +448,7 @@ endif
 
 ifeq ($(CONFIG_NGINX_HTTP_BROTLI),y)
   define Download/nginx-brotli
-    VERSION:=0fdca2565dbedb88101ca19b1fb1511272f0821f
+    VERSION:=bcceaab88e555f686d5ed39dfb238f898df2788c
     SUBDIR:=nginx-brotli
     FILE:=ngx-brotli-module-$$(VERSION).tar.xz
     URL:=https://github.com/google/ngx_brotli.git
