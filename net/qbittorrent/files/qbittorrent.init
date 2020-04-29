@@ -1,18 +1,13 @@
 #!/bin/sh /etc/rc.common
-# Licensed to the public under the Apache License 2.0.
-# ubus call service list
 
 START=99
 
 USE_PROCD=1
 
 NAME=qbittorrent
-args=/usr/bin/qbittorrent-nox
+PROG=/usr/bin/qbittorrent-nox
 
-QBT_PID_FILE=/var/run/qbittorrent.pid
-QBT_INI_FILE=/tmp/qBittorrent/config/qBittorrent.conf
-
-QBT_INSTANCE=""
+QBT_CONF_FILE=/tmp/qBittorrent/config/qBittorrent.conf
 
 _info() {
 	logger -p daemon.info -t "$NAME" "$*"
@@ -22,9 +17,45 @@ _err() {
 	logger -p daemon.err -t "$NAME" "$*"
 }
 
+_make_dir() {
+	local d
+	for d in "$@"; do
+		if [ ! -d "$d" ]; then
+			mkdir -p "$d" 2>/dev/null || return 1
+		fi
+	done
+
+	return 0
+}
+
+_change_owner() {
+	local u="$1"; shift
+
+	local d
+	for d in "$@"; do
+		if [ -f "$d" ]; then
+			chown "$u" "$d" 2>/dev/null || return 1
+		elif [ -d "$d" ]; then
+			chown -R "$u" "$d" 2>/dev/null || return 1
+		fi
+	done
+
+	return 0
+}
+
+_reset_dir_mode() {
+	local d
+	for d in "$@"; do
+		if [ -d "$d" ]; then
+			find "$d" -type d -exec chmod 755 {} \; 2>/dev/null
+			find "$d" -type f -exec chmod 644 {} \; 2>/dev/null
+		fi
+	done
+}
+
 validate_QBT () {
 	uci_validate_section "$NAME" vlmcsd "$1" \
-		'enabled:bool:1' \
+		'enabled:bool:0' \
 		'user:string:root' \
 		'profile:string:/tmp' \
 		'configuration:string' \
@@ -52,12 +83,12 @@ validate_QBT () {
 		'PreAllocation:or("true","false"):false' \
 		'SavePath:string:/tmp/download' \
 		'StartInPause:or("true","false"):false' \
-		'TempPathEnabled:or("true","false"):false' \
+		'TempPathEnabled:or("true","false"):true' \
 		'TempPath:string:temp/' \
 		'UseIncompleteExtension:or("true","false"):false' \
 		'TorrentExportDir:string' \
 		'Locale:string:en' \
-		'UseRandomPort:or("true","false"):false' \
+		'UseRandomPort:or("true","false"):true' \
 		'IgnoreSlowTorrents:or("true","false")' \
 		'MaxActiveDownloads:integer' \
 		'MaxActiveTorrents:integer' \
@@ -72,8 +103,8 @@ validate_QBT () {
 		'Password:string' \
 		'Port:port:8080' \
 		'Username:string' \
-		'UseUPnP:or("true","false"):true' \
-		'AnonymousMode:or("true","false"):false' \
+		'UseUPnP:or("true","false")' \
+		'AnonymousMode:or("true","false"):true' \
 		'AnnounceToAllTrackers:or("true","false")' \
 		'IgnoreLimitsLAN:or("true","false"):true' \
 		'IncludeOverhead:or("true","false"):false' \
@@ -81,7 +112,7 @@ validate_QBT () {
 		'OutgoingPortsMax:port' \
 		'OutgoingPortsMin:port' \
 		'AnnounceToAllTiers:or("true","false")' \
-		'BTProtocol:or("Both","TCP","UTP"):Both' \
+		'BTProtocol:or("Both","TCP","UTP")' \
 		'CreateTorrentSubfolder:or("true","false"):true' \
 		'DisableAutoTMMByDefault:or("true","false"):true' \
 		'SuperSeeding:or("true","false"):false' \
@@ -108,8 +139,8 @@ sed_options () {
 	shift
 	shift
 
-	if [ $( sed -n '/^\['"$Anchor"'\]/p' $QBT_INI_FILE | wc -l ) -lt 1 ]; then
-		sed -i '$a\\n\['"$Anchor"'\]' "$QBT_INI_FILE"
+	if [ $( sed -n '/^\['"$Anchor"'\]/p' $QBT_CONF_FILE | wc -l ) -lt 1 ]; then
+		sed -i '$a\\n\['"$Anchor"'\]' "$QBT_CONF_FILE"
 	fi
 
 	local o; local v; local ol
@@ -118,13 +149,13 @@ sed_options () {
 		[ -n "$category" ] && ol="$category\\\\$o" || ol="$o"
 
 		[ -n "$v" ] && {
-			if [ $( sed -n '/^'"$ol"'=/p' $QBT_INI_FILE | wc -l ) -lt 1 ]; then
-				sed -i '/'"$Anchor"'/a'"$ol"'='"$v" "$QBT_INI_FILE"
+			if [ $( sed -n '/^'"$ol"'=/p' $QBT_CONF_FILE | wc -l ) -lt 1 ]; then
+				sed -i '/'"$Anchor"'/a'"$ol"'='"$v" "$QBT_CONF_FILE"
 			else
-				sed -i 's/'"$ol"'=.*/'"$ol"'='"$v"'/g' "$QBT_INI_FILE"
+				sed -i 's/'"$ol"'=.*/'"$ol"'='"$v"'/g' "$QBT_CONF_FILE"
 			fi
 		} || {
-			sed -i '/'"$ol"'=.*/d' "$QBT_INI_FILE"
+			sed -i '/'"$ol"'=.*/d' "$QBT_CONF_FILE"
 		}
 	done
 }
@@ -141,8 +172,8 @@ config_QBT () {
 		AgeType="$(echo $SaveTime | sed 's/[0-9]//g' | sed 's/[dD]/0/g' | sed 's/[mM]/1/g' | sed 's/[yY]/2/g')"
 	}
 
-	[ -f "$QBT_INI_FILE" ] || {
-	cat>"$QBT_INI_FILE"<<EOF
+	[ -f "$QBT_CONF_FILE" ] || {
+	cat>"$QBT_CONF_FILE"<<EOF
 [LegalNotice]
 Accepted=true
 
@@ -188,13 +219,16 @@ EOF
 
 init_QBT(){
 	local section="$1"
-	QBT_INSTANCE="${NAME}.${section}"
+	local instance="${NAME}.${section}"
 
 	validate_QBT "$section" || { _err "Validation failed."; return 1; }
 
+	local running=$(ubus call service list "{'name':'$NAME'}" | jsonfilter -e "@.$NAME.instances['${instance}'].running")
 	[ x"$enabled" = x0 ] && {
-		_info "Instance \"${section}\" disabled.";
-		procd_kill "$NAME" "$QBT_INSTANCE" >/dev/null 2>&1;
+		[ "$running" = "true" ] && {
+			_info "Instance \"${section}\" disabled.";
+			ubus call service delete "{'name':'$NAME','instance':'$instance'}";
+		}
 		return 1;
 	}
 
@@ -202,22 +236,22 @@ init_QBT(){
 	[ -n "$configuration" ] && {
 		confdir="qBittorrent_$configuration"
 	}
-
-	[ -d "$profile/$confdir/config" ] || {
-		mkdir -m 0755 -p "$profile/$confdir/config"
+	
+	_make_dir "$profile/$confdir/config" "$SavePath" "$TempPathEnabled" || {
+		_err "Can't create dirs!"
+		return 1
 	}
 
-	[ "$user" != "root" ] && {
-		[ -d "$confdir" ] && {
-			local groupnow="$(ls -l $profile | grep $confdir | awk '{print $3})"
-			local usernow="$(ls -l $profile | grep $confdir | awk '{print $4})"
+	_reset_dir_mode "$profile/$confdir" "$SavePath" "$TempPathEnabled"
 
-			[ "$usernow" != "$user" ] && { _err "Permission denied!"; return 1; }
-		} || {
-			chmod -R g+w "$profile/$confdir"
-			chown -R "$user":"$user" "$profile/$confdir"
-		}
-	}
+	if [ -n "$user" ]; then
+		if ( user_exists "$user" && _change_owner "$user" "$profile/$confdir" "$SavePath" "$TempPathEnabled" ); then
+			_info "qBittorrent will run with user '$user'."
+		else
+			_info "Setting run user to '$user' failed, default user will be used."
+			user=root
+		fi
+	fi
 
 	[ "$AuthSubnetWhitelistEnabled" = true ] && {
 		AuthSubnetWhitelist="$( echo $AuthSubnetWhitelist | sed 's/ /,/g')"
@@ -225,11 +259,11 @@ init_QBT(){
 		AuthSubnetWhitelist="@Invalid()"
 	}
 
-	QBT_INI_FILE="$profile/$confdir/config/qBittorrent.conf"
+	QBT_CONF_FILE="$profile/$confdir/config/qBittorrent.conf"
 	config_QBT
 
-	procd_open_instance $QBT_INSTANCE
-	procd_set_param command $args
+	procd_open_instance "$instance"
+	procd_set_param command "$PROG"
 	procd_append_param command --profile="$profile"
 
 	[ -n "$configuration" ] && {
@@ -237,15 +271,14 @@ init_QBT(){
 	}
 
 	procd_set_param respawn
-	procd_set_param user $user
-	procd_set_param file $QBT_INI_FILE
-	procd_set_param pidfile $QBT_PID_FILE
+	procd_set_param user "$user"
+	procd_set_param file "$QBT_CONF_FILE"
 	procd_close_instance
 }
 
-service_triggers()
-{
+service_triggers() {
 	procd_add_reload_trigger "$NAME"
+	procd_add_validation validate_QBT
 }
 
 start_service() {
@@ -259,6 +292,6 @@ reload_service() {
 
 restart() {
 	stop
-	sleep 2
+	sleep 1
 	start
 }
