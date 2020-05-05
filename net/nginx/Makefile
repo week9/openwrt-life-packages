@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=nginx
-PKG_VERSION:=1.16.1
-PKG_RELEASE:=5
+PKG_VERSION:=1.18.0
+PKG_RELEASE:=1
 
 PKG_SOURCE:=nginx-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://nginx.org/download/
-PKG_HASH:=f11c2a6dd1d3515736f0324857957db2de98be862461b5a542a3ac6188dbe32b
+PKG_HASH:=4c373e7ab5bf91d34a4f11a0c9496561061ba5eee6020db272a17a7228d35f99
 
 PKG_MAINTAINER:=Thomas Heil <heil@terminal-consulting.de> \
 				Ansuel Smith <ansuelsmth@gmail.com>
@@ -74,7 +74,8 @@ PKG_CONFIG_DEPENDS := \
 	CONFIG_NGINX_RTMP_MODULE \
 	CONFIG_NGINX_TS_MODULE \
 	CONFIG_OPENSSL_ENGINE \
-	CONFIG_OPENSSL_WITH_NPN
+	CONFIG_OPENSSL_WITH_NPN \
+	CONFIG_NGINX_NOPCRE
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -126,13 +127,17 @@ Package/nginx-all-module/description = $(Package/nginx/description) \
 
 define Package/nginx/config
   source "$(SOURCE)/Config.in"
+config NGINX_NOPCRE
+	bool
+	default y if !NGINX_PCRE
+	default n if NGINX_PCRE
 endef
 
 define Package/nginx-ssl/config
   source "$(SOURCE)/Config_ssl.in"
 endef
 
-config_files=nginx.conf mime.types
+config_files=mime.types
 
 define Package/nginx/conffiles
 /etc/nginx/
@@ -334,7 +339,7 @@ endef
 
 define Package/nginx-mod-luci
   $(Package/nginx-mod-luci/default)
-  DEPENDS += +nginx
+  DEPENDS += +luci-i18n-nginx-zh-cn
 endef
 
 define Package/nginx-mod-luci/description
@@ -379,16 +384,16 @@ CONFIGURE_ARGS += \
 
 define Package/nginx-mod-luci/install
 	$(INSTALL_DIR) $(1)/etc/nginx
-	$(INSTALL_BIN) ./files-luci-support/luci_uwsgi.conf $(1)/etc/nginx/luci_uwsgi.conf
-	$(INSTALL_BIN) ./files-luci-support/luci_nginx.conf $(1)/etc/nginx/luci_nginx.conf
+	$(INSTALL_CONF) ./files-luci-support/luci_uwsgi.conf $(1)/etc/nginx/luci_uwsgi.conf
+	$(INSTALL_CONF) ./files-luci-support/luci_nginx.conf $(1)/etc/nginx/luci_nginx.conf
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_BIN) ./files-luci-support/60_nginx-luci-support $(1)/etc/uci-defaults/60_nginx-luci-support
 endef
 
 define Package/nginx-mod-luci-ssl/install
-	$(Package/nginx-mod-luci/install)
 	$(INSTALL_DIR) $(1)/etc/nginx
-	$(INSTALL_BIN) ./files-luci-support/luci_nginx_ssl.conf $(1)/etc/nginx/luci_nginx_ssl.conf
+	$(INSTALL_CONF) ./files-luci-support/luci_uwsgi.conf $(1)/etc/nginx/luci_uwsgi.conf
+	$(INSTALL_CONF) ./files-luci-support/luci_nginx_ssl.conf $(1)/etc/nginx/luci_nginx_ssl.conf
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_BIN) ./files-luci-support/70_nginx-luci-support-ssl $(1)/etc/uci-defaults/70_nginx-luci-support-ssl
 endef
@@ -396,16 +401,16 @@ endef
 define Package/nginx/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/nginx $(1)/usr/sbin/
-	$(INSTALL_DIR) $(1)/etc/nginx
+	$(INSTALL_DIR) $(1)/etc/nginx/conf.d
 	$(INSTALL_DATA) $(addprefix $(PKG_INSTALL_DIR)/etc/nginx/,$(config_files)) $(1)/etc/nginx/
+	$(INSTALL_CONF) ./files/nginx.conf $(1)/etc/nginx/
+	$(INSTALL_CONF) ./files/conf.d/* $(1)/etc/nginx/conf.d/
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/nginx.init $(1)/etc/init.d/nginx
-	$(INSTALL_DIR) $(1)/etc/nginx/conf.d
-	$(INSTALL_DATA) ./files/conf.d/* $(1)/etc/nginx/conf.d/
 ifeq ($(CONFIG_NGINX_NAXSI),y)
 	$(INSTALL_DIR) $(1)/etc/nginx
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/nginx-naxsi/naxsi_config/naxsi_core.rules $(1)/etc/nginx
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/conf/naxsi.rules $(1)/etc/nginx
+	$(INSTALL_CONF) $(PKG_BUILD_DIR)/nginx-naxsi/naxsi_config/naxsi_core.rules $(1)/etc/nginx
+	$(INSTALL_CONF) ./files/naxsi.rules $(1)/etc/nginx
 	chmod 0640 $(1)/etc/nginx/naxsi_core.rules
 	chmod 0640 $(1)/etc/nginx/naxsi.rules
 endif
