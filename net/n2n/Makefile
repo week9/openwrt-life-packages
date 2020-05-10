@@ -6,7 +6,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=n2n
 PKG_SOURCE_URL:=https://github.com/ntop/n2n.git
-PKG_SOURCE_VERSION:=b2f09a2d0cdc358f7f9dbdbacd0041c9ad504f0a
+PKG_SOURCE_VERSION:=7d5aa1f7525ec1374e161494d331a5b8b8d2ec10
 PKG_VERSION:=2.7.0_git$(PKG_SOURCE_VERSION)
 PKG_RELEASE:=1
 
@@ -64,8 +64,8 @@ define Package/n2n-edge/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/edge $(1)/usr/bin/
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/edge $(1)/etc/init.d/edge
-	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_CONF) ./files/edge.conf.sample $(1)/etc/config/n2n-edge.conf
+	$(INSTALL_DIR) $(1)/etc/n2n
+	$(INSTALL_CONF) ./files/edge.conf.sample $(1)/etc/n2n/edge.conf
 endef
 
 define Package/n2n-supernode/conffiles
@@ -77,8 +77,8 @@ define Package/n2n-supernode/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/supernode $(1)/usr/bin/
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/supernode $(1)/etc/init.d/supernode
-	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_CONF) ./files/supernode.conf.sample $(1)/etc/config/n2n-supernode.conf
+	$(INSTALL_DIR) $(1)/etc/n2n
+	$(INSTALL_CONF) ./files/supernode.conf.sample $(1)/etc/n2n/supernode.conf
 endef
 
 $(eval $(call BuildPackage,n2n-edge))

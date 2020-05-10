@@ -79,6 +79,11 @@
 #        使用AES CBC进行加密（默认使用twofish）。
 -A
 #
+#       -z
+#        Enable lzo1x compression for outgoing data packets (default=disabled).
+#        为发送的数据包启用lzo1x压缩（默认禁用）。
+#-z
+#
 #       -E
 #        Accept multicast MAC addresses (default=drop).
 #        接受组播MAC地址（默认丢弃）。
