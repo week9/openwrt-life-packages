@@ -39,7 +39,7 @@ define Package/gerbera/description
 endef
 
 define Package/gerbera/conffiles
-/etc/gerbera/config.xml
+/etc/config/gerbera
 endef
 
 CMAKE_OPTIONS += \

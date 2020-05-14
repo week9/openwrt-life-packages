@@ -56,9 +56,6 @@ define Package/freshclam/description
  Database updater for ClamAV
 endef
 
-define Package/clamav/conffiles
-endef
-
 CONFIGURE_ARGS += \
 	--sysconfdir=/etc/clamav/ \
 	--enable-milter \
@@ -89,6 +86,10 @@ CONFIGURE_VARS += $(if $(CONFIG_IPV6),have_cv_ipv6=yes)
 TARGET_CXXFLAGS += -ffunction-sections -fdata-sections -fno-rtti -flto
 TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed $(if $(CONFIG_USE_MUSL),-lfts)
 
+define Package/clamav/conffiles
+/etc/config/clamav
+endef
+
 define Package/clamav/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/clamd $(1)/usr/sbin/
@@ -97,6 +98,7 @@ define Package/clamav/install
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/clamconf $(1)/usr/sbin/
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/clamdscan $(1)/usr/sbin/
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/clamscan $(1)/usr/sbin/
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/clamonacc $(1)/usr/sbin/
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/sigtool $(1)/usr/sbin/
 
 	$(INSTALL_DIR) $(1)/usr/lib
@@ -110,6 +112,10 @@ define Package/clamav/install
 
 	$(INSTALL_DIR) $(1)/usr/share/clamav
 	$(CP) ./files/bytecode.cvd $(1)/usr/share/clamav/
+endef
+
+define Package/freshclam/conffiles
+/etc/config/freshclam
 endef
 
 define Package/freshclam/install

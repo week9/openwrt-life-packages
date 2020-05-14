@@ -54,6 +54,10 @@ define Build/Configure
 	)
 endef
 
+define Package/smartsnmpd/conffiles
+/etc/config/smartsnmpd
+endef
+
 define Package/smartsnmpd/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/smartsnmpd $(1)/usr/sbin/smartsnmpd
@@ -64,7 +68,7 @@ define Package/smartsnmpd/install
 
 	$(INSTALL_DIR) $(1)/usr/lib/lua/smartsnmp/mibs
 	$(INSTALL_BIN) ./files/mibs/*.lua $(1)/usr/lib/lua/smartsnmp/mibs/
-	
+
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_DATA) ./files/smartsnmpd.conf $(1)/etc/config/smartsnmpd
 

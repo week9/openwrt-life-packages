@@ -231,6 +231,7 @@ define ovs_common_install
 	$$(LN) /usr/share/openvswitch/scripts/ovs-ctl-wrapper $$(1)/usr/bin/ovs-kmod-ctl
 endef
 define Package/openvswitch-common/conffiles
+/etc/config/openvswitch
 /etc/openvswitch
 endef
 $(eval $(call OvsPackageTemplate,common))

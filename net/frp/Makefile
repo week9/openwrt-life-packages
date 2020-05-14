@@ -57,6 +57,14 @@ define frp/templates
   endef
 endef
 
+define Package/frpc/conffiles
+/etc/config/frpc
+endef
+
+define Package/frps/conffiles
+/etc/config/frps
+endef
+
 FRP_COMPONENTS:=frpc frps
 
 $(foreach component,$(FRP_COMPONENTS), \

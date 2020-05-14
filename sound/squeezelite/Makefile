@@ -119,6 +119,13 @@ endif
 
 MAKE_FLAGS+=OPTS="$(opts)"
 
+define Package/squeezelite/conffiles
+/etc/config/squeezelite
+endef
+
+Package/squeezelite-mini/conffiles = $(Package/squeezelite/conffiles)
+Package/squeezelite-full/conffiles = $(Package/squeezelite/conffiles)
+
 # Squeezelite uses functions which are deprecated in recent ffmpeg versions.
 # See https://github.com/ralph-irving/squeezelite/issues/60
 TARGET_CFLAGS+=-Wno-deprecated-declarations

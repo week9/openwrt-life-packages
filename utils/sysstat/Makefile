@@ -36,6 +36,7 @@ define Package/sysstat/description
 endef
 
 define Package/sysstat/conffiles
+/etc/config/sysstat
 /etc/sysstat/sysstat.ioconf
 /etc/sysstat/sysstat
 endef

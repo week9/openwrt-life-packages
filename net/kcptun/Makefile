@@ -32,6 +32,10 @@ GO_PKG_LDFLAGS:=-s -w -X 'main.VERSION=$(PKG_VERSION)-$(PKG_RELEASE) for OpenWrt
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
+define Package/kcptun-config/conffiles
+/etc/config/kcptun
+endef
+
 define Package/kcptun/Default
   define Package/kcptun-$(1)
     SECTION:=net

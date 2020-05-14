@@ -28,7 +28,7 @@ define Package/dump1090/Default
   SECTION:=utils
   CATEGORY:=Utilities
   TITLE:=Mode S decoder for the Realtek RTL2832U
-  URL:=https://github.com/mutability/dump1090
+  URL:=https://github.com/flightaware/dump1090
 endef
 
 define Package/dump1090
@@ -58,6 +58,10 @@ MAKE_FLAGS += \
 
 TARGET_CFLAGS += -ffunction-sections -fdata-sections -flto
 TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed
+
+define Package/dump1090/conffiles
+/etc/config/dump1090
+endef
 
 define Package/dump1090/install
 	$(INSTALL_DIR) $(1)/etc/init.d
