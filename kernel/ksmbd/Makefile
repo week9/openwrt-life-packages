@@ -1,12 +1,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ksmbd
-PKG_VERSION:=3.1.7
+PKG_VERSION:=3.1.8
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/cifsd-team/cifsd/archive/$(PKG_VERSION)/
-PKG_HASH:=a52eacd42df52f68721af82d7bdd1421361f39ad0dc7863992a08903a4bef39d
+PKG_HASH:=54e0053ec77b5e3aee822a4fa0750ab8b62a5d88208655d84cc8f0d779442aac
 
 PKG_MAINTAINER:=Andy Walsh <andy.walsh44+github@gmail.com>
 PKG_LICENSE:=GPL-2.0-or-later
