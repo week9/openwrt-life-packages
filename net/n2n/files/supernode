@@ -4,7 +4,7 @@ STOP=10
 
 USE_PROCD=1
 PROG=/usr/bin/supernode
-CONFIGFILE=/etc/config/n2n-supernode.conf
+CONFIGFILE=/etc/n2n/supernode.conf
 
 section_enabled() {
 	config_get_bool enabled "$1" enabled 0
