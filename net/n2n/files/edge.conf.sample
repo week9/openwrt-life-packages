@@ -99,6 +99,12 @@
 #        设置N2N数据包的TOS标记（与SSH类似的优先级是0x48）
 #-T=0x48
 #
+#       -n
+#        Route an IPv4 network via the gw. Use 0.0.0.0/0 for the default gw. Can be set multiple times.
+#        通过指定网关路由IPv4网络。默认网关使用0.0.0.0/0 可以设置多次。
+#-n 0.0.0.0/0:192.168.99.1
+#-n 192.168.100.0/24:192.168.99.1
+#
 #       -v
 #        Make more verbose. Repeat as required.
 #        输出更详细的日志。
