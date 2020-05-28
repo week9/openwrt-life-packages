@@ -24,10 +24,10 @@ USER_CLEANUP=
 
 . /lib/functions.sh
 
-check_cron()
+remove_legacy_cron()
 {
-    [ -f "/etc/crontabs/root" ] && grep -q '/etc/init.d/acme' /etc/crontabs/root && return
-    echo "0 0 * * * /etc/init.d/acme start" >> /etc/crontabs/root
+    [ -f "/etc/crontabs/root" ] && grep -q '/etc/init\.d/acme' /etc/crontabs/root || return
+    sed -i '/\/etc\/init\.d\/acme start/d' /etc/crontabs/root
     /etc/init.d/cron start
 }
 
@@ -329,7 +329,7 @@ load_vars()
     DEBUG=$(config_get "$section" debug)
 }
 
-check_cron
+remove_legacy_cron
 [ -n "$CHECK_CRON" ] && exit 0
 [ -e "/var/run/acme_boot" ] && rm -f "/var/run/acme_boot" && exit 0
 

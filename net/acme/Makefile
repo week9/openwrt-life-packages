@@ -37,6 +37,7 @@ endef
 
 define Package/acme/conffiles
 /etc/config/acme
+/etc/cron.d/acme
 /etc/acme
 endef
 
@@ -50,6 +51,8 @@ define Package/acme/install
 	$(INSTALL_DIR) $(1)/etc/acme
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_CONF) ./files/acme.config $(1)/etc/config/acme
+	$(INSTALL_DIR) $(1)/etc/cron.d
+	$(INSTALL_CONF) ./files/acme.cron $(1)/etc/cron.d/acme
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/acme.init $(1)/etc/init.d/acme
 	$(INSTALL_DIR) $(1)/usr/lib/acme
