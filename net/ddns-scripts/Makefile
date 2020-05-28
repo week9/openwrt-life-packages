@@ -246,6 +246,7 @@ define Package/ddns-scripts_cloudflare.com-v4/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/files/ddns.defaults $(1)/etc/uci-defaults/ddns_cloudflare.com-v4
 	$(INSTALL_DIR) $(1)/usr/lib/ddns
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/files/update_cloudflare_com_v4.sh $(1)/usr/lib/ddns
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/files/update_cloudflare_com_v4_token.sh $(1)/usr/lib/ddns
 endef
 define Package/ddns-scripts_cloudflare.com-v4/postinst
 	#!/bin/sh
@@ -255,6 +256,8 @@ define Package/ddns-scripts_cloudflare.com-v4/postinst
 	# and create new
 	printf "%s\\t%s\\n" '"cloudflare.com-v4"' '"update_cloudflare_com_v4.sh"' >> $${IPKG_INSTROOT}/etc/ddns/services
 	printf "%s\\t%s\\n" '"cloudflare.com-v4"' '"update_cloudflare_com_v4.sh"' >> $${IPKG_INSTROOT}/etc/ddns/services_ipv6
+	printf "%s\\t%s\\n" '"cloudflare.com-v4-token"' '"update_cloudflare_com_v4_token.sh"' >> $${IPKG_INSTROOT}/etc/ddns/services
+	printf "%s\\t%s\\n" '"cloudflare.com-v4-token"' '"update_cloudflare_com_v4_token.sh"' >> $${IPKG_INSTROOT}/etc/ddns/services_ipv6
 	# on real system restart service if enabled
 	[ -z "$${IPKG_INSTROOT}" ] && {
 		[ -x /etc/uci-defaults/ddns_cloudflare.com-v4 ] && \
