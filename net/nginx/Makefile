@@ -522,7 +522,7 @@ endif
 
 ifeq ($(CONFIG_NGINX_LUA),y)
   define Download/lua-nginx
-    VERSION:=760f7073da87da23bb4f024943089edfad35c72e
+    VERSION:=febd730062a80593cadef29fff28f3b4a40c786a
     SUBDIR:=lua-nginx
     FILE:=lua-nginx-module-$$(VERSION).tar.xz
     URL:=https://github.com/openresty/lua-nginx-module.git
